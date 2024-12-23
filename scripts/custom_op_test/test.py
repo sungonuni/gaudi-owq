@@ -13,19 +13,20 @@
 import torch
 from custom_func import CustomFunc
 
-def test_custom_relu_op_function():
+def test_custom_func_op_function():
     print(torch.ops.custom_op.custom_func)
-    input = torch.randn(3, 5, requires_grad=True)
-    input_hpu = input.to('hpu').detach()
-    input_hpu.requires_grad = True
+
+    input_a = torch.randn(16, 16, requires_grad=True)
+    input_a_hpu = input_a.to('hpu').detach()
+
+    input_b = torch.randn(16, 16, requires_grad=True)
+    input_b_hpu = input_b.to('hpu').detach()
+
+    output_cpu = input_a + input_b
     
-    relu = torch.nn.ReLU(inplace=False)
-    output_cpu = relu(input)
-    
-    
-    custom_relu = CustomFunc()
-    output_hpu = custom_relu(input_hpu);
+    custom_add = CustomFunc()
+    output_hpu = custom_add(input_a_hpu, input_b_hpu);
     print(torch.equal(output_hpu.detach().cpu(), output_cpu.detach()))
 
-test_custom_relu_op_function()
+test_custom_func_op_function()
 

@@ -20,9 +20,12 @@ bool register_custom_func() {
     // inputs desc
     habana::custom_op::InputDesc input_a_desc{
         habana::custom_op::input_type::TENSOR, 0};
+    
+    habana::custom_op::InputDesc input_b_desc{
+        habana::custom_op::input_type::TENSOR, 1};
 
     std::vector<habana::custom_op::InputDesc> inputs_desc{
-        input_a_desc};
+        input_a_desc, input_b_desc};
 
     // output desc
     // output shape callback
@@ -40,30 +43,30 @@ bool register_custom_func() {
         output_desc};
 
     // user param callback
-    auto user_params_lambda = [](const at::Stack& inputs, size_t& size) {
-      HPU_PARAMS_STUB(ns_ReluKernel::Params);
-      params->threshold.f = 0.0;
-      return params;
-    };
+    // auto user_params_lambda = [](const at::Stack& inputs, size_t& size) {
+    //   HPU_PARAMS_STUB(ns_ReluKernel::Params);
+    //   params->threshold.f = 0.0;
+    //   return params;
+    // };
 
     // actual register
     REGISTER_CUSTOM_OP_ATTRIBUTES(
         "custom_op::custom_func", //schema name
-        "custom_relu_fwd_f32_gaudi2", // guid
+        "custom_add_f32_gaudi2", // guid
         inputs_desc,
         outputs_desc,
-        user_params_lambda);
+        nullptr);
     std::cout << "cpp registered custom_op::custom_func\n";
     return true;
 }
 
 at::Tensor custom_func_execute(
-    torch::Tensor input_a) {
+    torch::Tensor input_a, torch::Tensor input_b) {
   TORCH_CHECK(input_a.scalar_type() == c10::ScalarType::Float, "Input input_a expected to be Float tensor");
   // Registering the custom op, need to be called only once
   static bool registered = register_custom_func();
   TORCH_CHECK(registered, "custom_func kernel not registered" );
-  std::vector<c10::IValue> inputs{input_a};
+  std::vector<c10::IValue> inputs{input_a, input_b};
   // Get custom op descriptor from registry
   auto op_desc = habana::custom_op::HabanaCustomOpDescriptor::getCustomOpDescriptor("custom_op::custom_func");
   // Actual call for op execution
@@ -74,7 +77,7 @@ at::Tensor custom_func_execute(
 
 
 TORCH_LIBRARY(custom_op, m) {
-  m.def("custom_func(Tensor self) -> Tensor");
+  m.def("custom_func(Tensor input_a, Tensor input_b) -> Tensor");
 }
 TORCH_LIBRARY_IMPL(custom_op, HPU, m) {
   m.impl("custom_func", custom_func_execute);
