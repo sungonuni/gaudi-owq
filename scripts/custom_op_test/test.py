@@ -22,6 +22,7 @@ def test_custom_relu_op_function():
     relu = torch.nn.ReLU(inplace=False)
     output_cpu = relu(input)
     
+    
     custom_relu = CustomFunc()
     output_hpu = custom_relu(input_hpu);
     print(torch.equal(output_hpu.detach().cpu(), output_cpu.detach()))
