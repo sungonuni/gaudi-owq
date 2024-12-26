@@ -31,10 +31,13 @@ torch.ops.load_library(custom_func_op_lib_path)
 
 class CustomFunction(torch.autograd.Function):
     @staticmethod
-    def forward(ctx, input_a, input_b):
+    def forward(ctx, input_a, input_b=None):
         # ctx is a context object that can be used to stash information
         # for backward computation
-        tensor = torch.ops.custom_op.custom_func(input_a, input_b)
+        if input_b != None:
+            tensor = torch.ops.custom_op.custom_func(input_a, input_b)
+        else:
+            tensor = torch.ops.custom_op.custom_func(input_a)
         ctx.tensor = tensor
         return tensor
 
@@ -43,7 +46,7 @@ class CustomFunc(torch.nn.Module):
     def __init__(self):
         super(CustomFunc, self).__init__()
 
-    def forward(self, input_a, input_b):
+    def forward(self, input_a, input_b=None):
         return CustomFunction.apply(input_a, input_b)
 
     def extra_repr(self):

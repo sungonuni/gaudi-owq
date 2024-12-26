@@ -38,6 +38,7 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVE
 #include "relu_all_gaudi2.hpp"
 #include "user_lut_gaudi2.hpp"
 #include "matmul_fwd_gaudi2.hpp"
+#include "gemv_i8_to_f16.hpp"
 
 #include "entry_points.hpp"
 #include <stdio.h>
@@ -144,6 +145,8 @@ tpc_lib_api::GlueCodeReturn GetKernelGuids( _IN_    tpc_lib_api::DeviceId       
            userLutInstance.GetKernelName(guids[GAUDI2_KERNEL_USER_LUT].name);
            MatrixMulFwdF32Gaudi2 matmulFwdg2Instance;
            matmulFwdg2Instance.GetKernelName(guids[GAUDI2_KERNEL_MATMUL_FWD_F32].name);
+           GemvDequantInt8Gaudi2 GemvFwdI8g2Instance;
+           GemvFwdI8g2Instance.GetKernelName(guids[GAUDI2_KERNEL_GEMV_FWD_I8].name);
         }
 
         if (kernelCount != nullptr)
@@ -449,6 +452,13 @@ InstantiateTpcKernel(_IN_  tpc_lib_api::HabanaKernelParams* params,
     if (strcmp(params->guid.name, kernelName) == 0)
     {
         return matmulFwdg2Instance.GetGcDefinitions(params, instance);
+    }
+
+    GemvDequantInt8Gaudi2 GemvFwdI8g2Instance;
+    GemvFwdI8g2Instance.GetKernelName(kernelName);
+    if (strcmp(params->guid.name, kernelName) == 0)
+    {
+        return GemvFwdI8g2Instance.GetGcDefinitions(params, instance);
     }
 
     return tpc_lib_api::GLUE_NODE_NOT_FOUND;

@@ -7,7 +7,7 @@
 extern unsigned char _binary___matrix_mul_fwd_f32_o_start;
 extern unsigned char _binary___matrix_mul_fwd_f32_o_end;
 
- tpc_lib_api::GlueCodeReturn GemvInt8Gaudi2::GetKernelName(
+ tpc_lib_api::GlueCodeReturn MatrixMulFwdF32Gaudi2::GetKernelName(
              char kernelName [tpc_lib_api::MAX_NODE_NAME])
  {
      strcpy(kernelName,"custom_matrix_multiply_fwd_f32_gaudi2");
@@ -15,7 +15,7 @@ extern unsigned char _binary___matrix_mul_fwd_f32_o_end;
  }
 
 
-tpc_lib_api::GlueCodeReturn GemvInt8Gaudi2::GetGcDefinitions(
+tpc_lib_api::GlueCodeReturn MatrixMulFwdF32Gaudi2::GetGcDefinitions(
             tpc_lib_api::HabanaKernelParams* in_defs,
             tpc_lib_api::HabanaKernelInstantiation* out_defs)
 {
