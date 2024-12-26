@@ -17,6 +17,7 @@ tpc_lib_api::GlueCodeReturn GemvDequantInt8Gaudi2::GetGcDefinitions(
 {
 	const int c_unrollCount = 4;
     tpc_lib_api::GlueCodeReturn retVal;
+    gemvParam* def = static_cast<gemvParam*>(in_defs->nodeParams.nodeParams);
     /*************************************************************************************
     *   Stage I - validate input
     **************************************************************************************/
@@ -152,7 +153,8 @@ tpc_lib_api::GlueCodeReturn GemvDequantInt8Gaudi2::GetGcDefinitions(
     /*************************************************************************************
     *    Stage IV -  define scalar parameters
     **************************************************************************************/
-    out_defs->kernel.paramsNr =0;
+    out_defs->kernel.paramsNr = sizeof(*def)/ sizeof(int);
+    memcpy(&( out_defs->kernel.scalarParams[0]),def, sizeof(*def));
 
     /*************************************************************************************
     *    Stage V -  Load ISA into the descriptor.

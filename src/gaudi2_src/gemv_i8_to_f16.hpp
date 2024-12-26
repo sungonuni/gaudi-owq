@@ -16,6 +16,13 @@ public:
 
     virtual tpc_lib_api::GlueCodeReturn GetKernelName(
             char kernelName [tpc_lib_api::MAX_NODE_NAME]);
+    
+    struct gemvParam
+    {
+        float step_size;
+        float zero_point;
+    };
+    
 
 private:
     GemvDequantInt8Gaudi2(const GemvDequantInt8Gaudi2& other) = delete;

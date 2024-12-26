@@ -1,7 +1,8 @@
 #define FLOAT32
 #include "kernel_config.h"
+#pragma tpc_printf (enable)
 
-void main(tensor input, tensor output)
+void main(tensor input, tensor output, float step_size, float zero_point)
 {
   const int depth = 0;
   const int width = 1;
@@ -64,8 +65,13 @@ void main(tensor input, tensor output)
             ifmCoords[width] = w;
 
             x00 = v_ld_tnsr_i(ifmCoords, input);
-            o00 = v_sel_leq_v_s_v_v(x00, 0.0, 0.0, x00);
-            // o00 = v_mul_v_s(x00, (SCALAR)0.3);
+            // o00 = v_sel_leq_v_s_v_v(x00, 0.0, 0.0, x00);
+            // o00 = (x00 * (SCALAR)0.1) + (SCALAR)0.01; // valid
+            printf("step_size value is %f\n", (SCALAR)step_size);
+            printf("zero_point value is %f\n", (SCALAR)zero_point);
+            o00 = v_mul_v_s(x00, (SCALAR)step_size);
+            o00 = v_f32_add_b(o00, (SCALAR)zero_point);
+
 // #if defined(USE_RELU6)
 //             o00 = v_sel_geq_v_s_v_v_b(o00, (SCALAR)6.0, (SCALAR)6.0, o00, o00,
 //                                        1, 0);
