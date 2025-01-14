@@ -37,7 +37,7 @@ To retrieve the package please visit [Habana Vault](https://vault.habana.ai/arti
 bash build.sh
 ```  
 
-2. **IMPORTANT** Register the path of custom TPC-C kernel file. The path of custom kernel should be added on environment variable GC_KERNEL_PATH. 
+2. (**IMPORTANT**) Register the path of custom TPC-C kernel file. The path of custom kernel should be added on environment variable GC_KERNEL_PATH. 
 ```  
 export GC_KERNEL_PATH=/code/owq_tpc/build/src/libcustom_tpc_perf_lib.so:/usr/lib/habanalabs/libtpc_kernels.so:
 ```  
