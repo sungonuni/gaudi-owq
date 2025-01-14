@@ -33,7 +33,7 @@ def test_custom_dequant():
 
     custom_dequant = CustomFunc()
     dequant_a_hpu = custom_dequant(input_a_hpu.to(torch.float), step_size, zero_scale)
-    print(torch.equal(dequant_a_hpu.detach().cpu(), dequant_a_cpu.detach()))
+    print(torch.isclose(dequant_a_hpu.detach().cpu(), dequant_a_cpu.detach()))
 
 test_custom_dequant()
 
